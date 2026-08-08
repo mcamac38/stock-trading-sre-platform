@@ -39,3 +39,10 @@ build
 *.log
 .env.*
 .aws
+*.key
+*.pem
+
+#Node
+node_modules/
+dist/
+build/
