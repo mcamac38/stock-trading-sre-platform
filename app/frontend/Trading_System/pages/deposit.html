@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Deposit | Stock Trading Simulator</title>
+    <meta
+      name="description"
+      content="Deposit funds into your simulator account for trading."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#0a2540" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+    <link rel="canonical" href="/pages/deposit.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Deposit • Stock Trading Simulator" />
+    <meta
+      property="og:description"
+      content="Deposit funds to practice buying stocks in the simulator."
+    />
+    <meta property="og:image" content="../images/social-card.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Deposit • Stock Trading Simulator" />
+    <meta
+      name="twitter:description"
+      content="Deposit funds to practice buying stocks in the simulator."
+    />
+    <meta name="twitter:image" content="../images/social-card.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header" role="banner">
+        <div class="branding">
+          <h1>Stock Trading Simulator</h1>
+        </div>
+      </header>
+
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <div class="nav-container">
+          <label
+            for="nav-toggle"
+            class="nav-toggle-label"
+            aria-label="Toggle navigation"
+          >
+            <span class="bar"></span>
+          </label>
+          <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+          <ul class="menu">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./portfolio.html">Portfolio</a></li>
+            <li><a href="./buy.html">Buy Stocks</a></li>
+            <li><a href="./sell.html">Sell Stocks</a></li>
+            <li><a href="./transactions.html">Transactions</a></li>
+            <li><a href="./deposit.html" aria-current="page">Deposit</a></li>
+            <li><a href="./withdraw.html">Withdraw</a></li>
+            <li><a href="./login.html">Logout</a></li>
+            <li class="admin-only">
+              <a href="./admin-create-stock.html">Create New Stock</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-hours.html">Change Market Hours</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-schedule.html">Change Market Schedule</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="site-main">
+        <div class="container">
+          <section class="card" aria-labelledby="deposit-title">
+            <h2 class="page-title" id="deposit-title">Deposit Funds</h2>
+            <div class="section-title">Current Balance</div>
+            <div class="stat">
+              <span class="label">Balance</span>
+			  <strong>$<span id="cash-amount">-</span></strong> 
+            </div>
+
+            <div class="msg success" role="status" aria-live="polite">
+              Deposit successful.
+            </div>
+            <div class="msg error" role="alert" aria-live="polite">
+              Deposit failed. Try again.
+            </div>
+
+            <form class="form" action="#" method="post" novalidate>
+              <div class="form-row">
+                <label for="depositAmount">Amount</label>
+                <input
+                  type="number"
+                  id="depositAmount"
+                  name="amount"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+              <div class="form-row">
+                <label for="fundingSource">Funding Source</label>
+                <select id="fundingSource" name="source" required>
+                  <option value="">Select source</option>
+                  <option value="bank">Bank Transfer</option>
+                  <option value="card">Credit Card</option>
+                </select>
+              </div>
+              <div class="actions">
+                <button type="submit" class="btn btn-primary">Deposit</button>
+                <a class="btn btn-cancel" href="../index.html">Cancel</a>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+
+      <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <h3>Stock Trading Simulator</h3>
+              <p>Manage cash with straightforward controls.</p>
+            </div>
+            <div class="footer-links">
+              <h4>Explore</h4>
+              <ul>
+                <li><a href="./portfolio.html">Portfolio</a></li>
+                <li><a href="./transactions.html">Transactions</a></li>
+              </ul>
+            </div>
+            <div class="footer-links">
+              <h4>Support</h4>
+              <ul>
+                <li><a href="mailto:support@example.com">Contact Us</a></li>
+                <li><a href="./login.html">Login</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <span>© 2025 Stock Trading Simulator</span>
+            <div class="social">
+              <a href="#" aria-label="Twitter">T</a>
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="GitHub">GH</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+	<script>
+		// Replace this with actual API Gateway Invoke URL
+		window.API_BASE_URL = "https://6hhdszthdg.execute-api.us-east-1.amazonaws.com/prod";
+	</script>
+	<script type="module">
+		import { requireAuth, deposit, renderCash } from "../javascript/api.js";
+		
+		// Requires login for this page
+		requireAuth();
+		
+		//review maybe
+		renderCash("cash-amount");
+		
+		//This grabs the DOM nodes
+		const form = document.querySelector("form");
+		const amountInput = document.getElementById("depositAmount");
+		const sourceSelect = document.getElementById("fundingSource");
+		
+		//These are optional message boxes (they can be used to add detail to the page)
+		const msgSuccess = document.querySelector(".msg.success");
+		const msgError = document.querySelector(".msg.error");
+		if (msgSuccess) msgSuccess.style.display = "none";
+		if (msgError) msgError.style.display = "none";
+		
+		form.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			
+			//This takes care of basic validation
+			const raw = (amountInput?.value || "").trim();
+			const amount = Number(raw);
+			if (!raw || Number.isNaN(amount) || amount <= 0) {
+				if (msgError) {
+					msgError.textContent = "Enter a valid amount greater than 0.";
+					msgError.style.display = "block";
+				}
+				else {
+					alert("Enter a valid amount greater than 0.");
+				}
+				return;
+			}
+			
+			//Disables the submit to avoid a double post
+			const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+			if (submitButton) submitButton.disabled = true;
+			
+			try {
+			
+				const selectedSource = sourceSelect?.value || "unspecified";
+				
+				//Calls backend: POST /cash/deposit { amount }
+				await deposit(amount)
+				
+				// clears and shows feedback
+				if (amountInput) amountInput.value = "";
+				if (msgSuccess) {
+					msgSuccess.textContent = "Deposit successful.";
+					msgSuccess.style.display = "block";
+				}
+				else {
+					alert("Deposit successful.");
+				}
+				
+				//Refreshes the cash shown in the display
+				await renderCash("cash-amount");
+			}
+			
+			catch (err) {
+				if (msgError) {
+					msgError.textContent = err.message || "Deposit failed.";
+					msgError.style.display = "block";
+				}
+				else {
+					alert(err.message || "Deposit failed.");
+				}
+			}
+			finally {
+				if (submitButton) submitButton.disabled = false;
+			}
+		});
+	</script>
+	<script type="module">
+      function renderBalance() {
+        const token = localStorage.getItem("token");
+        if (!token) return; // not logged in, skip
+        fetch(API_BASE_URL + "/account", {
+          headers: { Authorization: "Bearer " + token }
+        })
+          .then(r => r.json())
+          .then(({ cash_balance }) => {
+            const el = document.getElementById("cash-amount");
+            if (el) {
+              el.textContent = Number(cash_balance)
+                .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+          })
+          .catch(() => {
+            // optional: show a subtle error message
+          });
+      }
+
+      // Run after page load
+      document.addEventListener("DOMContentLoaded", renderBalance);
+    </script>
+  </body>
+</html>

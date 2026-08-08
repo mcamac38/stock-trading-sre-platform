@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sell Stocks | Stock Trading Simulator</title>
+    <meta
+      name="description"
+      content="Place simulated sell orders with clear confirmations and totals."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#0a2540" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+    <link rel="canonical" href="/pages/sell.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sell • Stock Trading Simulator" />
+    <meta
+      property="og:description"
+      content="Simulate sell orders with a professional, minimalist workflow."
+    />
+    <meta property="og:image" content="../images/social-card.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Sell • Stock Trading Simulator" />
+    <meta
+      name="twitter:description"
+      content="Simulate sell orders with a professional, minimalist workflow."
+    />
+    <meta name="twitter:image" content="../images/social-card.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header" role="banner">
+        <div class="branding">
+          <h1>Stock Trading Simulator</h1>
+        </div>
+      </header>
+
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <div class="nav-container">
+          <label
+            for="nav-toggle"
+            class="nav-toggle-label"
+            aria-label="Toggle navigation"
+          >
+            <span class="bar"></span>
+          </label>
+          <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+          <ul class="menu">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./portfolio.html">Portfolio</a></li>
+            <li><a href="./buy.html">Buy Stocks</a></li>
+            <li><a href="./sell.html" aria-current="page">Sell Stocks</a></li>
+            <li><a href="./transactions.html">Transactions</a></li>
+            <li><a href="./deposit.html">Deposit</a></li>
+            <li><a href="./withdraw.html">Withdraw</a></li>
+            <li><a href="./login.html">Logout</a></li>
+            <li class="admin-only">
+              <a href="./admin-create-stock.html">Create New Stock</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-hours.html">Change Market Hours</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-schedule.html">Change Market Schedule</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="site-main">
+        <div class="container">
+          <section class="card" aria-labelledby="sell-title">
+            <h2 class="page-title" id="sell-title">Sell Stock</h2>
+            <div class="grid two">
+              <div>
+                <div class="section-title">Your Capital</div>
+                <div class="stat">
+                  <span class="label">Balance</span>
+                  $<span class="value" id="cash-amount">—</span>
+                </div>
+              </div>
+              <div>
+                <div class="section-title">Stock Order</div>
+                <p class="subtle">
+                  Select the stock to sell. A confirmation will appear before
+                  placing the order.
+                </p>
+              </div>
+            </div>
+
+            <div class="msg success" role="status" aria-live="polite">
+              Sell order placed successfully.
+            </div>
+            <div class="msg error" role="alert" aria-live="polite">
+              You do not have enough shares.
+            </div>
+
+            <form class="form" action="#" method="post" novalidate>
+              <div class="form-row">
+                <label for="tickerSelect">Owned Stock</label>
+                <select id="tickerSelect" class="form-select">
+                  <option value="">Loading...</option>
+                </select>
+				<div style="font-size: 12px; color: #666; margin: 4px 0 10px;"> 
+				(Selecting a stock will auto-fill the Ticker box below. You can also type a ticker manually.)
+				</div>
+			  </div>
+              <div class="form-row">
+			    <label for="sellTicker">Stock Ticker</label>
+			    <input
+				  type="text"
+				  id="sellTicker"
+				  name="ticker"
+				  placeholder="e.g., AAPL"
+				  required
+				/>
+			  			  </div>
+			  <div class="form-row">
+                <label for="sellQty">Quantity</label>
+                <input
+                  type="number"
+                  id="sellQty"
+                  name="quantity"
+                  min="1"
+                  step="1"
+                  required
+                />
+              </div>
+              <div class="grid two">
+                <div>
+                  <div class="section-title">Current Price</div>
+                  <div class="stat">
+                    <span class="label">Price</span>
+                    $<span class="value" id="price-value">—</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="section-title">Total Value</div>
+                  <div class="stat">
+                    <span class="label">Total</span>
+                    $<span class="value" id="total-value">—</span>
+                  </div>
+                </div>
+              </div>
+              <div class="section-title">Chart</div>
+              <div class="chart" aria-label="Stock chart placeholder">
+                <canvas id="sellChart" width="720" height="260"></canvas>
+              </div>
+              <div class="actions">
+                <button type="submit" class="btn btn-primary">Sell</button>
+                <a class="btn btn-cancel" href="../index.html">Cancel</a>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+
+      <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <h3>Stock Trading Simulator</h3>
+              <p>Sell positions with clarity and confirmation.</p>
+            </div>
+            <div class="footer-links">
+              <h4>Explore</h4>
+              <ul>
+                <li><a href="./portfolio.html">Portfolio</a></li>
+                <li><a href="./transactions.html">Transactions</a></li>
+              </ul>
+            </div>
+            <div class="footer-links">
+              <h4>Support</h4>
+              <ul>
+                <li><a href="mailto:support@example.com">Contact Us</a></li>
+                <li><a href="./login.html">Login</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <span>© 2025 Stock Trading Simulator</span>
+            <div class="social">
+              <a href="#" aria-label="Twitter">T</a>
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="GitHub">GH</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+	<script>
+		// Replace this with your actual API Gateway Invoke URL
+		window.API_BASE_URL = "https://6hhdszthdg.execute-api.us-east-1.amazonaws.com/prod";
+	</script>
+	<script type="module">
+	import { requireAuth, sellOrder, renderCash, getTickerHistory } from "../javascript/api.js";
+
+	// Requires login & (optionally) show cash in a header <span id="cash-amount">
+	requireAuth();
+	renderCash();
+
+	// Grabs DOM
+	const form = document.querySelector("form");
+	const tickerInput = document.getElementById("sellTicker") || document.getElementById("ticker");
+	const qtyInput = document.getElementById("sellQty") || document.getElementById("quantity");
+	const select = document.getElementById("tickerSelect")
+
+	// Optional message boxes (use if present; otherwise we fall back to alert)
+	const msgSuccess = document.querySelector(".msg.success");
+	const msgError = document.querySelector(".msg.error");
+	if (msgSuccess) msgSuccess.style.display = "none";
+	if (msgError) msgError.style.display = "none";
+
+	// Helper
+	const fmt = (n) => Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+	// --- Current Price & Total Cost User Interface targets ---
+	const priceEl = document.getElementById("price-value");
+	const totalEl = document.getElementById("total-value");
+	let currentPrice = null;
+	window.pricesByTicker = window.pricesByTicker || {};
+	const pricesByTicker = window.pricesByTicker; // <- cache
+	
+	// ADD: lightweight line chart renderer (y-axis never below $0)
+	function renderLineChart(canvas, series) {
+	  if (!canvas || !series || !series.length) return;
+	  const ctx = canvas.getContext("2d");
+	  const w = canvas.width, h = canvas.height;
+	  ctx.clearRect(0, 0, w, h);
+
+	  // padding for axes
+	  const padL = 46, padR = 8, padT = 10, padB = 22;
+	  const plotW = w - padL - padR, plotH = h - padT - padB;
+
+	  // compute min/max (clamp min to 0)
+	  const values = series.map(d => Number(d.close));
+	  const rawMin = Math.min(...values);
+	  const rawMax = Math.max(...values);
+	  const minY = Math.max(0, rawMin * 0.98);
+	  const maxY = Math.max(minY + 0.01, rawMax * 1.02);
+
+	  const xFor = i => padL + (i / (series.length - 1)) * plotW;
+	  const yFor = v => padT + (1 - (v - minY) / (maxY - minY)) * plotH;
+
+	  // axes
+	  ctx.strokeStyle = "#9CA3AF";
+	  ctx.lineWidth = 1;
+	  ctx.beginPath(); // y-axis line
+	  ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + plotH); ctx.stroke();
+	  ctx.beginPath(); // x-axis line
+	  ctx.moveTo(padL, padT + plotH); ctx.lineTo(padL + plotW, padT + plotH); ctx.stroke();
+
+	  // y-ticks (0, mid, max)
+	  ctx.fillStyle = "#374151";
+	  ctx.font = "12px system-ui, sans-serif";
+	  const ticks = [minY, (minY + maxY) / 2, maxY].map(v => Math.max(0, v));
+	  ticks.forEach((v, idx) => {
+		const y = yFor(v);
+		ctx.strokeStyle = "#E5E7EB";
+		ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
+		const label = `$${v.toFixed(2)}`;
+		ctx.fillText(label, 6, y + 4);
+	  });
+
+	  // line
+	  ctx.strokeStyle = "#111827";
+	  ctx.lineWidth = 2;
+	  ctx.beginPath();
+	  series.forEach((d, i) => {
+		const x = xFor(i), y = yFor(Number(d.close));
+		if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+	  });
+	  ctx.stroke();
+	}	
+	
+	// ADD: fetch + render into #sellChart
+	async function drawSellChart(ticker) {
+	  const t = (ticker || "").trim().toUpperCase();
+	  const canvas = document.getElementById("sellChart");
+	  if (!t || !canvas) return;
+	  try {
+		const data = await getTickerHistory(t, 7);
+		renderLineChart(canvas, Array.isArray(data) ? data : []);
+	  } 
+	  catch (e) {
+        console.error("chart", e);
+	  }
+	}
+	
+		
+	//This fethces the price for a ticker and render it
+		async function loadPrice(t) {
+		    const ticker = (t || "").toUpperCase().trim();
+			if (!ticker) {
+			    currentPrice = null;
+				priceEl.textContent = "-";
+				totalEl.textContent = "-";
+				return
+			}
+			
+			const cached = (window.pricesByTicker || {})[ticker];
+			if (Number.isFinite(cached)) {
+			  currentPrice = cached;
+			  priceEl.textContent = `${fmt(currentPrice)}`;
+			  const q = Number(qtyInput.value || 0);
+			  totalEl.textContent = q > 0 && Number.isFinite(currentPrice) ? `${fmt(q * currentPrice)}` : "-";
+			  return;
+			}
+			
+			try {
+				const r = await fetch (`${window.API_BASE_URL}/market/tickers/${encodeURIComponent(ticker)}`, {
+					headers: {
+						"Authorization": `Bearer ${localStorage.getItem("access_token") || ""}`
+					}
+				});
+				if (!r.ok) throw new Error(`HTTP ${r.status}`);
+				const data = await r.json();
+				currentPrice = Number(data.current_price);
+				priceEl.textContent = `${fmt(currentPrice)}`;
+			
+				// refreshes the total if the quantity is already typed
+				const q = Number(qtyInput.value || 0);
+				totalEl.textContent = q > 0 && Number.isFinite(currentPrice) ? `${fmt(q * currentPrice)}` : "-"	;
+			}
+			catch (e) {
+				console.error("Failed to load price:", e);
+				currentPrice = null;
+				priceEl.textContent = "-";
+				totalEl.textContent = "-";
+			}
+	    }
+	// This is for when the user picks from the dropdown, should sync the input and load the Price
+		
+	select.addEventListener("change", () => {
+	    const v = (select.value || "").toUpperCase();
+		tickerInput.value = v;
+		loadPrice(v);
+		drawSellChart(v);
+	});
+		
+	// Also this will load the price for when the user finishes typing in the ticker too
+	tickerInput.addEventListener("blur", () => loadPrice(tickerInput.value));
+	
+	
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+
+		const rawTicker = (tickerInput?.value || "").trim().toUpperCase();
+		const rawQty = (qtyInput?.value || "").trim();
+		const qty = Number(rawQty);
+
+		if (!rawTicker) return showError("Enter a ticker symbol (e.g., ACME).");
+		if (!rawQty || isNaN(qty) || qty <= 0) return showError("Enter a valid quantity greater than 0.");
+			
+     	//This is the confirmation dialog and window before placing an order
+	    const priceText = priceEl?.textContent || "-";
+		const totalText = totalEl?.textContent || "-";
+		
+		const confirmMsg = 
+		  `Are you sure you want to sell?\n\n` + 
+		  `${qty} shares of ${rawTicker} @ $${priceText}\n` + 
+		  `Total cost: $${totalText}\n\n` + 
+		  `Click Proceed to continue or Cancel to cancel.`;
+		  
+		const Proceed = window.confirm(confirmMsg);
+		if (!Proceed) {
+		//User canceled so it won't do anything or talk to the backend
+		  return;
+		}
+		
+		const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+		if (submitBtn) submitBtn.disabled = true;
+
+		try {
+		// POST /trades/order { ticker, side: "sell", quantity }
+		const res = await sellOrder({ ticker: rawTicker, side: "sell", quantity: qty });
+
+		if (qtyInput) qtyInput.value = "";
+			showSuccess(`SELL ${res.ticker} @ ${fmt(res.price)} × ${res.quantity} = $${fmt(res.total_value)}`);
+
+		// Refreshs cash shown
+		await renderCash();
+		} 
+		catch (err) {
+			showError(err.message || "Sell order failed.");
+		} 
+		finally {
+			if (submitBtn) submitBtn.disabled = false;
+		}
+	});
+
+	function showSuccess(message) {
+		if (msgSuccess) {
+		msgSuccess.textContent = message;
+		msgSuccess.style.display = "block";
+    } 
+	else {
+      alert(message);
+    }
+    if (msgError) msgError.style.display = "none";
+	}
+
+	function showError(message) {
+		if (msgError) {
+		msgError.textContent = message;
+		msgError.style.display = "block";
+		} 
+		else {
+			alert(message);
+		}
+		if (msgSuccess) msgSuccess.style.display = "none";
+		}
+	</script>
+	<script type="module">
+      import { listTickers } from "../javascript/api.js";
+	  
+	  const select = document.getElementById("tickerSelect");
+      const tickerInput =
+        document.getElementById("sellTicker") ||
+        document.querySelector('[name="ticker"]');
+	  const qtyInput = document.getElementById("sellQty");
+	  const priceEl = document.getElementById("price-value");
+	  const totalEl = document.getElementById("total-value");
+	  const pricesByTicker = (window.pricesByTicker = window.pricesByTicker || {});
+	  const fmt = (n) =>
+		(isFinite(globalThis.Number(n)) ? globalThis.Number(n) : 0).toLocaleString(
+		undefined,
+		{ minimumFractionDigits: 2, maximumFractionDigits: 2 }
+		);
+		
+	  function makeOpt(label, value = "") {
+        const o = document.createElement("option");
+        o.value = value;
+        o.textContent = label;
+        return o;
+      }
+      
+	  (async () => {
+        try {
+          const stocks = await listTickers();
+		  select.innerHTML = "";
+          select.appendChild(makeOpt("Select a Stock", ""));
+          stocks.forEach(s => {
+            select.appendChild(makeOpt(`${s.ticker} — ${s.company_name}`, s.ticker));
+			pricesByTicker[s.ticker] = Number(s.current_price);
+          });
+        }
+		catch (e) {
+          select.innerHTML = "";
+          select.appendChild(makeOpt("Failed to load stocks", ""));
+          select.disabled = true;
+          console.error(e);
+        }
+      })();
+	  
+	  function renderTotals() {
+	      const q = Number(qtyInput.value || 0);
+		  const t = (tickerInput.value || "").toUpperCase().trim();
+		  const p = pricesByTicker[t];
+		  if (Number.isFinite(p)) {
+		      priceEl.textContent = `${fmt(p)}`
+			  totalEl.textContent = q > 0 ? `${fmt(q * p)}` : "-";
+	      }
+          else {
+	          priceEl.textContent = "-";
+		      totalEl.textContent = "-";
+	      }
+	  }
+	  
+	  // Events to keep user interface in sync
+	  select.addEventListener("change", () => {
+      tickerInput.value = (select.value || "").toUpperCase();
+      renderTotals();
+      });
+	  tickerInput.addEventListener("blur", renderTotals);
+      qtyInput.addEventListener("input", renderTotals);
+
+      // Initial render
+      renderTotals();
+
+      // Sync dropdown → text input
+      if (select && tickerInput) {
+        select.addEventListener("change", () => {
+          tickerInput.value = select.value || "";
+          if (tickerInput.value) tickerInput.value = tickerInput.value.toUpperCase();
+        });
+        
+        // Sync text input → dropdown
+        tickerInput.addEventListener("input", () => {
+          const v = (tickerInput.value || "").toUpperCase();
+          const match = [...select.options].find(o => o.value === v);
+          select.value = match ? v : "";
+		  drawSellChart(v);
+        });
+      }
+	  
+    //  listTickers().then(stocks => {
+    //    const select = document.getElementById("tickerSelect");
+    //    if (!select) return;
+    //    select.innerHTML = "<option value=''>Select Stock to Sell</option>";
+    //    stocks.forEach(s => {
+    //      const opt = document.createElement("option");
+    //      opt.value = s.ticker;
+    //      opt.textContent = `${s.ticker} - ${s.company_name}`;
+    //      select.appendChild(opt);
+    //    });
+    //  });
+    </script>
+  </body>
+</html>

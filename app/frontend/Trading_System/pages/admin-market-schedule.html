@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin • Market Schedule | Stock Trading Simulator</title>
+    <meta
+      name="description"
+      content="Manage market days and holidays (admin)."
+    />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#0a2540" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+    <link rel="canonical" href="/pages/admin-market-schedule.html" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header" role="banner">
+        <div class="branding">
+          <h1>Stock Trading Simulator</h1>
+        </div>
+      </header>
+
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <div class="nav-container">
+          <label
+            for="nav-toggle"
+            class="nav-toggle-label"
+            aria-label="Toggle navigation"
+          >
+            <span class="bar"></span>
+          </label>
+          <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+          <ul class="menu">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./portfolio.html">Portfolio</a></li>
+            <li><a href="./buy.html">Buy Stocks</a></li>
+            <li><a href="./sell.html">Sell Stocks</a></li>
+            <li><a href="./transactions.html">Transactions</a></li>
+            <li><a href="./deposit.html">Deposit</a></li>
+            <li><a href="./withdraw.html">Withdraw</a></li>
+            <li><a href="./login.html">Logout</a></li>
+            <li class="admin-only">
+              <a href="./admin-create-stock.html">Create New Stock</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-hours.html">Change Market Hours</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-schedule.html" aria-current="page"
+                >Change Market Schedule</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="site-main">
+        <div class="container">
+          <section class="card" aria-labelledby="schedule-title">
+            <h2 class="page-title" id="schedule-title">
+              Change Market Schedule
+            </h2>
+
+            <div class="msg success" role="status" aria-live="polite">
+              Schedule updated.
+            </div>
+            <div class="msg error" role="alert" aria-live="polite">
+              Update failed.
+            </div>
+
+            <form class="form" action="#" method="post" novalidate>
+			  <!-- Closure date (maps to close_date) -->
+			  <div class="form-row">
+			    <label for="close_date">Closure Date</label>
+			    <input
+				  type="date"
+				  id="close_date"
+				  name="close_date"
+				  required
+				/>
+				<small class="muted">Select the calendar date for this holiday or special schedule.</small>
+			  </div>
+
+			  <!-- Closed all day (maps to is_closed) -->
+			  <div class="form-row">
+			    <label for="is_closed">
+			      <input
+				    type="checkbox"
+				    id="is_closed"
+				    name="is_closed"
+				    checked
+			      />
+				  Closed all day
+			    </label>
+			    <small class="muted">
+			    Uncheck to set special open/close times (half day).
+			    </small>
+		      </div>
+
+			  <!-- Special hours (maps to open_time / close_time) -->
+			  <div class="form-row" id="special-hours-row">
+			    <label>Special Hours (optional)</label>
+			    <div class="inline-fields">
+				  <div>
+				    <label for="open_time">Open Time</label>
+				    <input type="time" id="open_time" name="open_time" />
+				  </div>
+				  <div>
+				    <label for="close_time">Close Time</label>
+				    <input type="time" id="close_time" name="close_time" />
+				  </div>
+			    </div>
+			    <small class="muted">
+			    Used only when "Closed all day" is unchecked. Leave blank to use the normal daily hours for either side.
+			    </small>
+		      </div>
+
+			  <!-- Note (maps to note) -->
+			  <div class="form-row">
+			    <label for="note">Note</label>
+			    <input
+				  type="text"
+				  id="note"
+			      name="note"
+				  maxlength="120"
+				  placeholder="e.g., Christmas Day, Early close, Exchange holiday"
+			    />
+			  </div>
+
+			  <div class="actions">
+			    <button type="submit" class="btn btn-primary">Save</button>
+			    <a class="btn btn-cancel" href="/index.html">Cancel</a>
+			  </div>
+		    </form>
+			
+            <hr class="divider" />
+
+            <h3 class="section-title">Existing Closures & Special Days</h3>
+            <p class="muted">
+              These dates override the normal market hours. Closed days ignore all trades; half days or special
+              hours use the times shown here.
+            </p>
+
+            <div class="table-wrapper">
+              <table class="table" aria-describedby="schedule-help">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Closed All Day?</th>
+                    <th scope="col">Open</th>
+                    <th scope="col">Close</th>
+                    <th scope="col">Note</th>
+                  </tr>
+                </thead>
+                <tbody id="schedule-body">
+                  <!-- JS will inject rows here -->
+                </tbody>
+              </table>
+              <p id="schedule-help" class="muted" style="margin-top:0.5rem;">
+                If no rows appear, there are currently no special closures configured.
+              </p>
+            </div>			
+          </section>
+        </div>
+      </main>
+
+      <footer class="site-footer" role="contentinfo">
+        <small>© 2025 Stock Trading Simulator | Arizona State University</small>
+      </footer>
+    </div>
+	<script>
+		// Replace this with actual API Gateway Invoke URL
+		window.API_BASE_URL = "https://6hhdszthdg.execute-api.us-east-1.amazonaws.com/prod";
+	</script>
+	<script type="module">
+	  import { requireAuth, getMarketSchedule, saveMarketScheduleEntry } from "../javascript/api.js";
+	  
+	  requireAuth();
+	  
+      const msgOK  = document.querySelector(".msg.success");
+      const msgErr = document.querySelector(".msg.error");
+	  const form    = document.querySelector("form.form");
+	  
+      const elDate   = document.getElementById("close_date");
+      const elClosed = document.getElementById("is_closed");
+      const elOpen   = document.getElementById("open_time");
+      const elClose  = document.getElementById("close_time");
+      const elNote   = document.getElementById("note");
+      const rowSpecial = document.getElementById("special-hours-row");	  
+	  
+      function showOK(text) {
+        if (msgOK)  { msgOK.textContent = text; msgOK.style.display = "block"; }
+        if (msgErr) msgErr.style.display = "none";
+      }
+      function showErr(text) {
+        if (msgErr) { msgErr.textContent = text; msgErr.style.display = "block"; }
+        if (msgOK)  msgOK.style.display = "none";
+      }
+
+
+	  //This will disable special-hours if Closed All Day is selected
+      function updateSpecialHoursState() {
+		const closed = !!(elClosed && elClosed.checked);
+		if (elOpen) elOpen.disabled = closed;
+		if (elClose) elClose.disabled = closed;
+		if (rowSpecial) {
+			rowSpecial.style.opacity = closed ? "0.6" : "1.0";
+		}
+	  }
+	  
+	  //This loads the current Schedule
+	  async function loadSchedule() {
+	    const tbody = document.getElementById("schedule-body");
+		if (tbody) {
+		  tbody.innerHTML = ""; //should clear olds rows
+		}
+				
+		try {
+		  const schedule = await getMarketSchedule();
+		  console.log("Market schedule from backend:", schedule);
+		  
+		  if(tbody && Array.isArray(schedule) && schedule.length > 0) {
+		    for (const item of schedule) {
+			  const tr = document.createElement("tr");
+			  
+			  const tdDate   = document.createElement("td");
+			  const tdClosed = document.createElement("td");
+			  const tdOpen   = document.createElement("td");
+			  const tdClose  = document.createElement("td");
+			  const tdNote   = document.createElement("td");
+			  
+			  tdDate.textContent = item.close_date || "";
+			  tdClosed.textContent = item.is_closed || "";
+			  tdOpen.textContent = item.open_time || "";
+			  tdClose.textContent = item.close_time || "";
+			  tdNote.textContent = item.note || "";
+			  
+			  tr.appendChild(tdDate);
+			  tr.appendChild(tdClosed);
+			  tr.appendChild(tdOpen);
+			  tr.appendChild(tdClose);
+			  tr.appendChild(tdNote);
+			  
+			  tbody.appendChild(tr);
+			}
+		  }
+		  
+		  showOK("Schedule Loaded.");
+		}
+		catch (e){
+		const detail = e?.detail || e?.body?.detail || "Failed to load schedule.";
+          console.error("Error loading market schedule:", e);
+          showErr(detail);
+        }
+	  }
+	  
+	  //The submit handler 
+	  form?.addEventListener("submit", async (ev) => {
+	    ev.preventDefault();
+		
+		const dateValue = elDate?.value;
+		if (!dateValue){
+		  showErr("Please set a closure date");
+		  return;
+		}
+		
+		const isClosed = !!(elClosed && elClosed.checked);
+		
+		//Only sends times when not closed all day
+		const openValue = !isClosed && elOpen ? elOpen.value : "";
+		const closeValue = !isClosed && elClose ? elClose.value : "";
+		const noteValue = elNote ? elNote.value : "";
+		
+		try {
+		  const rec = await saveMarketScheduleEntry({
+		    close_date: dateValue,
+			is_closed: isClosed,
+			open_time: openValue || null,
+			close_time: closeValue || null,
+			note: noteValue || null,
+		});
+		console.log("Saved closure:", rec);
+		showOK(`Saved schedule for ${rec.close_date}`);
+		
+		// Reset form lightly
+        if (elDate)  elDate.value = "";
+        if (elNote)  elNote.value = "";
+        if (elClosed) elClosed.checked = true;
+        if (elOpen)  elOpen.value = "";
+        if (elClose) elClose.value = "";
+        updateSpecialHoursState();
+		
+        await loadSchedule();
+      } catch (e) {
+        const detail = e?.detail || e?.body?.detail || "Failed to save schedule.";
+        console.error("Error saving market schedule:", e);
+        showErr(detail);
+      }
+     });		
+		
+	 loadSchedule();
+	</script>
+  </body>
+</html>

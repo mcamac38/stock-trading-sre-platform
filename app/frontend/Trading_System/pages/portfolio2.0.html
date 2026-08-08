@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio | Stock Trading Simulator</title>
+    <meta
+      name="description"
+      content="View holdings, balances, and portfolio value trends in the simulator."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#0a2540" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+    <link rel="canonical" href="/pages/portfolio.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Portfolio • Stock Trading Simulator" />
+    <meta
+      property="og:description"
+      content="Track your positions and portfolio value in a clean interface."
+    />
+    <meta property="og:image" content="../images/social-card.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Portfolio • Stock Trading Simulator" />
+    <meta
+      name="twitter:description"
+      content="Track your positions and portfolio value in a clean interface."
+    />
+    <meta name="twitter:image" content="../images/social-card.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header" role="banner">
+        <div class="branding">
+          <h1>Stock Trading Simulator</h1>
+        </div>
+      </header>
+
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <div class="nav-container">
+          <label
+            for="nav-toggle"
+            class="nav-toggle-label"
+            aria-label="Toggle navigation"
+          >
+            <span class="bar"></span>
+          </label>
+          <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+          <ul class="menu">
+            <li><a href="../index.html">Home</a></li>
+            <li>
+              <a href="./portfolio.html" aria-current="page">Portfolio</a>
+            </li>
+            <li><a href="./buy.html">Buy Stocks</a></li>
+            <li><a href="./sell.html">Sell Stocks</a></li>
+            <li><a href="./transactions.html">Transactions</a></li>
+            <li><a href="./deposit.html">Deposit</a></li>
+            <li><a href="./withdraw.html">Withdraw</a></li>
+            <li><a href="./login.html">Logout</a></li>
+            <li class="admin-only">
+              <a href="./admin-create-stock.html">Create New Stock</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-hours.html">Change Market Hours</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-schedule.html">Change Market Schedule</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="site-main">
+        <div class="container">
+          <section class="card" aria-labelledby="portfolio-title">
+            <h2 class="page-title" id="portfolio-title">Your Portfolio</h2>
+            <div class="totals">
+              <div class="stat">
+                <span class="label">Cash</span>
+				<span class="value" id="cash-total">$—</span>
+              </div>
+              <div class="stat">
+                <span class="label">Portfolio</span
+                ><span class="value" id="portfolio-total">$—</span>
+              </div>
+            </div>
+            <div
+              class="table-wrap"
+              role="region"
+              aria-label="Owned stocks table"
+            >
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Ticker</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Current Price</th>
+                    <th scope="col">Total Value</th>
+                  </tr>
+                </thead>
+                <tbody id="holdings-body">
+                  <tr>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <h3 class="section-title">Portfolio Value</h3>
+            <div class="chart" aria-label="Portfolio value over time">
+			  <canvas
+			    id="portfolio-chart"
+				aria-label="Portfolio value over the last 7 days"
+				role="img">
+			  </canvas>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <h3>Stock Trading Simulator</h3>
+              <p>Track your holdings and practice disciplined investing.</p>
+            </div>
+            <div class="footer-links">
+              <h4>Explore</h4>
+              <ul>
+                <li><a href="./transactions.html">Transactions</a></li>
+                <li><a href="./buy.html">Buy</a></li>
+                <li><a href="./sell.html">Sell</a></li>
+              </ul>
+            </div>
+            <div class="footer-links">
+              <h4>Support</h4>
+              <ul>
+                <li><a href="mailto:support@example.com">Contact Us</a></li>
+                <li><a href="./login.html">Login</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <span>© 2025 Stock Trading Simulator</span>
+            <div class="social">
+              <a href="#" aria-label="Twitter">T</a>
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="GitHub">GH</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+	<script src="http://cdn.jsdeliver.net/npm/chart.js"></script>
+	<script type="module">
+	    import { requireAuth, getPortfolio } from "../javascript/api.js";
+	    requireAuth();
+		
+		const fmtMoney = (value) => {
+		  const n = Number(value);
+		  if (!Number.isFinite(n))
+		    return "-";
+		  return n.toLocaleString(undefined, {
+		    minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
+		  })
+		};
+		
+		//This should grab DOM nodes
+		const cashEl = document.getElementById("cash-total");
+		const portfolioEl = document.getElementById("portfolio-total");
+		const tbody = document.getElementById("holdings-body");
+		const chartCanvas = document.getElementById("portfolio-chart");
+		
+		let portfolioChart = null;
+		
+		function renderTotals({ cash_balance, portfolio_value }) {
+		  if (cashEl) {
+			  cashEl.textContent = `$${fmtMoney(data.cash_balance)}`;
+			}
+			if (portfolioEl) {
+			  portfolioEl.textContent = `$${fmtMoney(data.portfolio_value)}`;
+		    }
+		}
+		
+		function renderHoldings(holdings) {
+		  	if (!tbody) return;
+			tbody.innerHTML = "";
+			
+			//In case no holdings
+			if (!holdings || holdings.length == 0) {
+			  const tr = document.createElement("tr");
+			  tr.innerHTML = ` <td colspan="4" class="muted">You don't have any holdings yet!</td> `;
+			  tbody.appendChild(tr);
+			  return;
+			}
+			  
+			  //Now this will render each holding row  
+			holdings.forEach((h) => {  
+			  const tr = document.createElement("tr");
+			  tr.innerHTML = `<td>${h.ticker}</td>
+							  <td>${Number(h.quantity).toLocaleString()}</td>
+							  <td>${fmtMoney(h.current_price)}</td>
+							  <td>${fmtMoney(h.total_value)}</td>
+							  `;
+							  tbody.appendChild(tr);
+			});
+		}
+		
+		function renderPortfolioChart(currentValue) {
+		  if (!chartCanvas || typeof Chart == "undefined") return;
+		  
+		  const ctx = chartCanvas.getContext("2d");
+		  const base = Number(currentValue) || 0;
+		  
+		  const days = 7;
+		  const today = new Date();
+		  const labels = [];
+		  const values = [];
+		  
+		  for (let daysAgo = days - 1; daysAgo >= 0; daysAgo--) {
+		    const d = new Date(today);
+			d.setDate(today.getDate() - daysAgo);
+			
+			labels.push(
+			  d.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+			);
+			
+			if (base <= 0) {
+			  values.push(0);
+			}
+			else {
+			  const t = 1 - daysAgo / (days - 1); //0 -> oldest, 1 -> today
+			  const value = base * (0.9 + 0.1 * t); // 90% of base up to 100%
+			  values.push(value);
+			}
+		  }
+		  
+		  if (portfolioChart) {
+		    portfolioChart.destroy();
+		  }
+		  
+		  portfolioChart = new Chart(ctx, {
+		    type: "line",
+			data: {
+			  labels,
+			  datasets: [
+			    {
+				  labels: "Portfolio value",
+				  data: values,
+				  tension: 0.25,
+				  fill: false,
+				}
+			  ],
+			},
+			options: {
+			  responsive: true,
+			  maintainAspectRatio: false,
+			  plugins: {
+			    legend: { display: false },
+				tooltip: {
+				  callbacks: {
+				    label: (context) => `$${fmtMoney(context.parsed.y)}`,
+				  },
+				},
+			  },
+			  scales: {
+			    y: {
+				  ticks: {
+				    callbacks: (val) => `$${Number(val).toLocaleString()}`,
+				  },	
+		        },
+			  },
+			},
+		  });
+		}
+		
+		async function loadPortfolio() {
+		  try {
+		    const data = await getPortfolio();
+			
+			renderTotals(data);
+			renderHoldings(data.holdings || []);
+			renderPortfolioChart(data.portfolio_value);
+		  }
+		  
+		  catch (err) {
+		    console.error("Failed to load portfolio:", err);
+			if (tbody) {
+			  tbody.innerHTML = `
+			    <tr>
+				  <td colspan="4" class="muted">Failed to load portfolio!.</td>
+				</tr>
+				`;
+			  }
+		  }
+		}
+		
+		loadPortfolio();
+	</script>
+  </body>
+</html>

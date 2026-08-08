@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin • Market Hours | Stock Trading Simulator</title>
+    <meta
+      name="description"
+      content="Configure market open and close hours (admin)."
+    />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#0a2540" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+    <link rel="canonical" href="/pages/admin-market-hours.html" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header" role="banner">
+        <div class="branding">
+          <h1>Stock Trading Simulator</h1>
+        </div>
+      </header>
+
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <div class="nav-container">
+          <label
+            for="nav-toggle"
+            class="nav-toggle-label"
+            aria-label="Toggle navigation"
+          >
+            <span class="bar"></span>
+          </label>
+          <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+          <ul class="menu">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./portfolio.html">Portfolio</a></li>
+            <li><a href="./buy.html">Buy Stocks</a></li>
+            <li><a href="./sell.html">Sell Stocks</a></li>
+            <li><a href="./transactions.html">Transactions</a></li>
+            <li><a href="./deposit.html">Deposit</a></li>
+            <li><a href="./withdraw.html">Withdraw</a></li>
+            <li><a href="./login.html">Logout</a></li>
+            <li class="admin-only">
+              <a href="./admin-create-stock.html">Create New Stock</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-hours.html" aria-current="page"
+                >Change Market Hours</a
+              >
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-schedule.html">Change Market Schedule</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="site-main">
+        <div class="container">
+          <section class="card" aria-labelledby="hours-title">
+            <h2 class="page-title" id="hours-title">Change Market Hours</h2>
+
+            <div class="msg success" role="status" aria-live="polite">
+              Market hours updated.
+            </div>
+            <div class="msg error" role="alert" aria-live="polite">
+              Update failed.
+            </div>
+
+            <form class="form" action="#" method="post" novalidate>
+              <div class="form-row">
+                <label for="openTime">Open Time</label>
+                <input type="time" id="open_time" name="open_time" required />
+              </div>
+              <div class="form-row">
+                <label for="closeTime">Close Time</label>
+                <input type="time" id="close_time" name="close_time" required />
+              </div>
+			  <div class="form-row">
+                <label for="timeZone">Time Zone</label>
+                <input type="text" id="tz_name" value="America/New_York" required />
+              </div>
+              <div class="actions">
+                <button id="saveBtn" type="submit" class="btn btn-primary">Save</button>
+                <a class="btn btn-cancel" href="./index.html">Cancel</a>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+
+      <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <h3>Stock Trading Simulator</h3>
+              <p>Configure open and close hours for the simulated market.</p>
+            </div>
+            <div class="footer-links">
+              <h4>Explore</h4>
+              <ul>
+                <li><a href="./admin-create-stock.html">Create Stock</a></li>
+                <li>
+                  <a href="./admin-market-schedule.html">Market Schedule</a>
+                </li>
+              </ul>
+            </div>
+            <div class="footer-links">
+              <h4>Support</h4>
+              <ul>
+                <li><a href="mailto:support@example.com">Contact Us</a></li>
+                <li><a href="./login.html">Login</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <span>© 2025 Stock Trading Simulator</span>
+            <div class="social">
+              <a href="#" aria-label="Twitter">Tw</a>
+              <a href="#" aria-label="LinkedIn">Ln</a>
+              <a href="#" aria-label="GitHub">GH</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+	<script>
+		// Replace this with actual API Gateway Invoke URL
+		window.API_BASE_URL = "https://6hhdszthdg.execute-api.us-east-1.amazonaws.com/prod";
+	</script>
+	<script type="module">
+	  import { requireAuth, getMarketHours, updateMarketHours } from "../javascript/api.js";
+	  
+	  requireAuth();
+	  
+	  //This section should grab elements that exist in the html
+	  const elOpen = document.getElementById("open_time");
+	  const elClose = document.getElementById("close_time");
+	  const elTz = document.getElementById("tz_name");
+	  const form = document.querySelector("form.form");
+	  const buttonSave = document.getElementById("saveBtn");
+	  const msgSuccess = document.querySelector(".msg.success");
+	  const msgError = document.querySelector(".msg.error");
+	  
+	  function showOK(text) {
+	    if (msgSuccess) { msgSuccess.textContent = text; msgSuccess.style.display = "block"; }
+		if (msgError) msgError.style.display = "none";
+	  }
+	  function showErr(text) {
+	    if (msgError) { msgError.textContent = text; msgError.style.display = "block"; }
+		if (msgSuccess) msgSuccess.style.display = "none";
+	  }
+	  function disableSave(disabled) {
+	    if (buttonSave) { 
+		  buttonSave.disabled = disabled; 
+		  buttonSave.setAttribute("aria-busy", String(disabled)); 
+		  }
+	  }
+	  
+	  
+	  //This part needs to load hours on the page
+	  async function init() {
+	    disableSave(true);
+		try {
+		  const r = await getMarketHours();
+		  if (elOpen) elOpen.value = r.open_time || "";
+		  if (elClose) elClose.value = r.close_time || "";
+		  if (elTz) elTz.value = r.tz_name || "America/New_York";
+		}
+		catch (e) {
+		  const detail = e?.detail || e?.body?.detail || "Failed to load market hours.";
+		  showErr(detail);
+		}
+		finally {
+		  disableSave(false);
+		}
+	  }
+	
+	  //This code should catch the submitted form
+	  form?.addEventListener("submit", async (ev) => {
+	    ev.preventDefault(); // prevents full-page POST
+	    disableSave(true);
+	    
+	    const payload = {
+		  open_time: elOpen?.value || "",
+		  close_time: elClose?.value || "",
+		  tz_name: (elTz?.value || "").trim() || "America/New_York"
+		  };
+        try {		
+		  const r = await updateMarketHours(payload)
+		    .catch(err => ({__failed: true, err}));
+			
+		  if (!r || r.__failed) {
+		    const res = await fetch(`${window.BASE_URL}/admin/market-hours`, {
+			  method: "PUT",
+			  headers: {
+			    "Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem("token") || ""}`
+			  },
+			  body: JSON.stringify(payload),
+			});
+			
+		  if (!res.ok) {
+			// show server-provided detail if present
+			let bodyText = "";
+			try { bodyText = await res.text(); } catch {}
+			let detail = "Update failed.";
+			try { detail = (JSON.parse(bodyText).detail) || detail; } catch {}
+			throw new Error(detail);
+			}
+		  }
+		  const open = payload.open_time;
+		  const close = payload.close_time;
+		  const tz = payload.tz_name;
+		  showOK(`Saved: ${open}–${close} (${tz})`);
+		   
+		}
+		catch (e) {
+		  const detail = e?.message || e?.body?.detail || "Update failed";
+		  showErr(detail);
+		}
+		finally {
+		  disableSave(false);
+		}
+      });
+	
+	  init();
+	</script>
+  </body>
+</html>

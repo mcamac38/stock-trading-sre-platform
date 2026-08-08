@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home | Stock Trading Simulator</title>
+    <meta
+      name="description"
+      content="Practice buying and selling stocks with a clean, modern simulator UI."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#1e293b" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="canonical" href="/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Stock Trading Simulator" />
+    <meta
+      property="og:description"
+      content="A professional, minimalist simulator for learning stock trading."
+    />
+    <meta property="og:image" content="./images/social-card.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Stock Trading Simulator" />
+    <meta
+      name="twitter:description"
+      content="Practice trading with a clean, modern interface."
+    />
+    <meta name="twitter:image" content="./images/social-card.png" />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header" role="banner">
+        <div class="branding">
+          <h1>Stock Trading Simulator</h1>
+        </div>
+      </header>
+
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <div class="nav-container">
+          <label
+            for="nav-toggle"
+            class="nav-toggle-label"
+            aria-label="Toggle navigation"
+          >
+            <span class="bar"></span>
+          </label>
+          <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+          <ul class="menu">
+            <li><a href="./index.html" aria-current="page">Home</a></li>
+            <li><a href="./pages/portfolio.html">Portfolio</a></li>
+            <li><a href="./pages/buy.html">Buy Stocks</a></li>
+            <li><a href="./pages/sell.html">Sell Stocks</a></li>
+            <li><a href="./pages/transactions.html">Transactions</a></li>
+            <li><a href="./pages/deposit.html">Deposit</a></li>
+            <li><a href="./pages/withdraw.html">Withdraw</a></li>
+            <li><a href="./pages/login.html">Logout</a></li>
+            <li class="admin-only">
+              <a href="./pages/admin-create-stock.html">Create New Stock</a>
+            </li>
+            <li class="admin-only">
+              <a href="./pages/admin-market-hours.html">Change Market Hours</a>
+            </li>
+            <li class="admin-only">
+              <a href="./pages/admin-market-schedule.html"
+                >Change Market Schedule</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="site-main">
+        <div class="container">
+          <section class="card" aria-labelledby="stocks-title">
+            <h2 class="page-title" id="stocks-title">Available Stocks</h2>
+            <div class="table-wrap" role="region" aria-label="Stocks table">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Ticker</th>
+                    <th scope="col">Company</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Outstanding Shares</th>
+                    <th scope="col">Market Cap</th>
+                    <th scope="col">Open</th>
+                    <th scope="col">High</th>
+                    <th scope="col">Low</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3 class="section-title">Current Market Hours</h3>
+            <p class="muted" id="market-hours">Open: — | Close: —</p>
+          </section>
+        </div>
+      </main>
+
+      <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <h3>Stock Trading Simulator</h3>
+              <p>
+                Hone your investment skills using our sophisticated,
+                user-friendly platform designed to provide a seamless and
+                professional stock trading experience.
+              </p>
+            </div>
+            <div class="footer-links">
+              <h4>Explore</h4>
+              <ul>
+                <li><a href="./pages/portfolio.html">Portfolio</a></li>
+                <li><a href="./pages/transactions.html">Transactions</a></li>
+                <li><a href="./pages/buy.html">Buy</a></li>
+                <li><a href="./pages/sell.html">Sell</a></li>
+              </ul>
+            </div>
+            <div class="footer-links">
+              <h4>Support</h4>
+              <ul>
+                <li><a href="mailto:support@example.com">Contact Us</a></li>
+                <li><a href="./pages/login.html">Login</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <span>© 2025 Stock Trading Simulator. All rights reserved.</span>
+            <div class="social">
+              <a href="#" aria-label="Twitter">T</a>
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="GitHub">GH</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+	<script type="module">
+	  import { token, listTickers, getMarketStatus } from "../javascript/api.js";
+	  
+	  // List the pages that require auth
+	  const protectedPaths = new Set([
+	    "/pages/portfolio",
+		"/pages/buy.html",
+        "/pages/sell.html",
+        "/pages/transactions.html",
+        "/pages/deposit.html",
+        "/pages/withdraw.html",
+        "/pages/admin-create-stock.html"
+      ]);
+	  
+	  //Intercepts clicks on links on the Home page
+	  document.addEventListener("click", (ev) => {
+	    const a = ev.target.closest("a[href]");
+	   	if (!a) return;
+	  	
+        // Resolve the link as a URL so we can compare pathnames reliably
+        const url = new URL(a.getAttribute("href"), location.origin);
+        
+        // If it’s a protected page and no token, bounce to login
+        if (protectedPaths.has(url.pathname) && !token()) {
+          ev.preventDefault();
+          location.href = "/pages/login.html";
+        }
+      });
+	  
+	  
+	  listTickers().then(stocks => {
+	    const tbody = document.querySelector("tbody");
+		if (!tbody) return;
+		
+		function money(n){
+		  if (n == null || isNaN(n)) return "-";
+		return `$${Number(n).toFixed(2)}`;
+		}
+		function cap(n){
+		  if (n == null || isNaN(n)) return "-";
+		  const v = Number(n);
+		  if (v >= 1_000_000_000_000) return `$${(v/1_000_000_000_000).toFixed(2)}T`;
+		  if (v >= 1_000_000_000) return `$${(v/1_000_000_000).toFixed(2)}B`;
+		  if (v >= 1_000_000)     return `$${(v/1_000_000).toFixed(2)}M`;
+		  if (v >= 1_000)         return `$${(v/1_000).toFixed(2)}K`;
+		  return `$${v.toFixed(2)}`;
+		}		
+		
+		tbody.innerHTML = "";
+		stocks.forEach(s => {
+		  const tr = document.createElement("tr");
+
+		  tr.innerHTML = `
+		    <td>${s.ticker}</td>
+			<td>${s.company_name}</td>
+			<td>${money(s.current_price)}</td>
+			<td>${Number(s.shares_outstanding ?? 0).toLocaleString()}</td>
+			<td>${cap(s.market_cap)}</td>
+			<td>${money(s.open_price)}</td>
+			<td>${money(s.day_high)}</td>
+			<td>${money(s.day_low)}</td>
+			`;
+		  tbody.appendChild(tr);
+		});
+	  });
+	  
+	  getMarketStatus().then(status => {
+	    const el = document.getElementById("market-hours");
+		if (!el) return;
+		
+		const open = status.open_time || "-";
+		const close = status.close_time || "-";
+		const tz = status.tz_name ? ` (${status.tz_name})` : "";
+		const state = status.is_open ? "Open Now" : "Closed Now";
+		
+		el.textContent = `Open: ${open} | Close: ${close}${tz} - ${state}`;
+	  })
+	  .catch(() => {
+	    const el = document.getElementById("market-hours");
+		if (el) el.textContent = "Market hours unavailable";
+	  });
+	</script>
+  </body>
+</html>

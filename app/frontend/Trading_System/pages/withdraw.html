@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Withdraw | Stock Trading Simulator</title>
+    <meta
+      name="description"
+      content="Withdraw funds from your simulator account securely."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#0a2540" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+    <link rel="canonical" href="/pages/withdraw.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Withdraw • Stock Trading Simulator" />
+    <meta
+      property="og:description"
+      content="Withdraw funds securely from your simulator account."
+    />
+    <meta property="og:image" content="../images/social-card.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Withdraw • Stock Trading Simulator" />
+    <meta
+      name="twitter:description"
+      content="Withdraw funds securely from your simulator account."
+    />
+    <meta name="twitter:image" content="../images/social-card.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header" role="banner">
+        <div class="branding">
+          <h1>Stock Trading Simulator</h1>
+        </div>
+      </header>
+
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <div class="nav-container">
+          <label
+            for="nav-toggle"
+            class="nav-toggle-label"
+            aria-label="Toggle navigation"
+          >
+            <span class="bar"></span>
+          </label>
+          <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+          <ul class="menu">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./portfolio.html">Portfolio</a></li>
+            <li><a href="./buy.html">Buy Stocks</a></li>
+            <li><a href="./sell.html">Sell Stocks</a></li>
+            <li><a href="./transactions.html">Transactions</a></li>
+            <li><a href="./deposit.html">Deposit</a></li>
+            <li><a href="./withdraw.html" aria-current="page">Withdraw</a></li>
+            <li><a href="./login.html">Logout</a></li>
+            <li class="admin-only">
+              <a href="./admin-create-stock.html">Create New Stock</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-hours.html">Change Market Hours</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-schedule.html">Change Market Schedule</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="site-main">
+        <div class="container">
+          <section class="card" aria-labelledby="withdraw-title">
+            <h2 class="page-title" id="withdraw-title">Withdraw Funds</h2>
+            <div class="section-title">Current Balance</div>
+            <div class="stat">
+              <span class="label">Balance</span>
+			  <strong>$<span id="cash-amount">-</span></strong> 
+            </div>
+
+            <div class="msg success" role="status" aria-live="polite">
+              Withdrawal submitted.
+            </div>
+            <div class="msg error" role="alert" aria-live="polite">
+              Withdrawal failed. Try again.
+            </div>
+
+            <form class="form" action="#" method="post" novalidate>
+              <div class="form-row">
+                <label for="withdrawAmount">Amount</label>
+                <input
+                  type="number"
+                  id="withdrawAmount"
+                  name="amount"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+              <div class="form-row">
+                <label for="withdrawMethod">Withdrawal Method</label>
+                <select id="withdrawMethod" name="method" required>
+                  <option value="">Select method</option>
+                  <option value="bank">Bank Transfer</option>
+                  <option value="check">Check</option>
+                </select>
+              </div>
+              <div class="actions">
+                <button type="submit" class="btn btn-primary">Withdraw</button>
+                <a class="btn btn-cancel" href="../index.html">Cancel</a>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+
+      <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <h3>Stock Trading Simulator</h3>
+              <p>Withdraw funds securely and efficiently.</p>
+            </div>
+            <div class="footer-links">
+              <h4>Explore</h4>
+              <ul>
+                <li><a href="./portfolio.html">Portfolio</a></li>
+                <li><a href="./transactions.html">Transactions</a></li>
+              </ul>
+            </div>
+            <div class="footer-links">
+              <h4>Support</h4>
+              <ul>
+                <li><a href="mailto:support@example.com">Contact Us</a></li>
+                <li><a href="./login.html">Login</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <span>© 2025 Stock Trading Simulator</span>
+            <div class="social">
+              <a href="#" aria-label="Twitter">T</a>
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="GitHub">GH</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+	<script>
+		// Replace this with your actual API Gateway Invoke URL
+		window.API_BASE_URL = "https://6hhdszthdg.execute-api.us-east-1.amazonaws.com/prod";
+	</script>
+	<script type="module">
+		import { requireAuth, withdraw, renderCash } from "../javascript/api.js"
+		
+		//Requires Login and shows current cash in a display
+		requireAuth();
+		renderCash("cash-amount");
+		
+		//Grabs DOM nodes
+		const form = document.querySelector("form");
+		const amountInput = document.getElementById("withdrawAmount");
+		const methodSelect = document.getElementById("withdrawMethod");
+		
+		//Utilizes message boxes otherswise falls back to alert
+		const msgSuccess = document.querySelector(".msg.success");
+		const msgError = document.querySelector(".msg.error");
+		if (msgSuccess) msgSuccess.style.display = "none";
+		if (msgError) msgError.style.display = "none";
+		
+		form.addEventListener("submit", async (e) => {
+			e.preventDefault();
+		
+			//Basic client-side validation
+			const raw = (amountInput?.value || "").trim();
+			const amount = Number(raw);
+			
+			if(!raw || Number.isNaN(amount) ||amount <= 0) {
+				if (msgError) {
+					msgError.textContent = "Enter a valid amount greater than 0.";
+					msgError.style.display = "block";
+				}
+				else { 
+					alert("Enter a valid amount greater than 0.");
+				}
+				return;
+			}
+			
+			//Disables submit button while processing
+			const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+			if (submitButton) submitButton.disabled = true;
+			
+			try { 
+				//calls backend: POST /cash/withdraw {amount}
+				await withdraw(amount);
+				
+				//clears input plus shows successfull feeback
+				if (amountInput) amountInput.value = "";
+				if (msgSuccess) {
+					msgSuccess.textContent = "Withdrawal Successful.";
+					msgSuccess.style.display = "block";
+					if (msgError) msgError.style.display = "none";
+				}
+				else {
+					alert("Withdrawal Successful.");
+				}
+				await renderCash("cash-amount");
+			}
+			catch (err) {
+				if (msgError) {
+					msgError.textContent = err.message || "Withdrawal failed.";
+					msgError.style.display = "block";
+					if (msgSuccess) msgSuccess.style.display = "none";
+				}
+				else {
+					alert(err.message || "Withdrawal failed.");
+				}
+					
+			}
+			finally {
+				if (submitButton) submitButton.disabled = false;
+			}
+		
+		});
+	</script>
+  </body>
+</html>

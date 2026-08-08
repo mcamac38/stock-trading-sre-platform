@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio | Stock Trading Simulator</title>
+    <meta
+      name="description"
+      content="View holdings, balances, and portfolio value trends in the simulator."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#0a2540" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+    <link rel="canonical" href="/pages/portfolio.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Portfolio • Stock Trading Simulator" />
+    <meta
+      property="og:description"
+      content="Track your positions and portfolio value in a clean interface."
+    />
+    <meta property="og:image" content="../images/social-card.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Portfolio • Stock Trading Simulator" />
+    <meta
+      name="twitter:description"
+      content="Track your positions and portfolio value in a clean interface."
+    />
+    <meta name="twitter:image" content="../images/social-card.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header" role="banner">
+        <div class="branding">
+          <h1>Stock Trading Simulator</h1>
+        </div>
+      </header>
+
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <div class="nav-container">
+          <label
+            for="nav-toggle"
+            class="nav-toggle-label"
+            aria-label="Toggle navigation"
+          >
+            <span class="bar"></span>
+          </label>
+          <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+          <ul class="menu">
+            <li><a href="../index.html">Home</a></li>
+            <li>
+              <a href="./portfolio.html" aria-current="page">Portfolio</a>
+            </li>
+            <li><a href="./buy.html">Buy Stocks</a></li>
+            <li><a href="./sell.html">Sell Stocks</a></li>
+            <li><a href="./transactions.html">Transactions</a></li>
+            <li><a href="./deposit.html">Deposit</a></li>
+            <li><a href="./withdraw.html">Withdraw</a></li>
+            <li><a href="./login.html">Logout</a></li>
+            <li class="admin-only">
+              <a href="./admin-create-stock.html">Create New Stock</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-hours.html">Change Market Hours</a>
+            </li>
+            <li class="admin-only">
+              <a href="./admin-market-schedule.html">Change Market Schedule</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="site-main">
+        <div class="container">
+          <section class="card" aria-labelledby="portfolio-title">
+            <h2 class="page-title" id="portfolio-title">Your Portfolio</h2>
+            <!-- Page toolbar: refresh action and status note for transparency -->
+            <div class="actions" style="margin-bottom: 12px">
+              <button id="refresh-btn" class="btn btn-accent" type="button">
+                Refresh
+              </button>
+              <span id="last-updated" class="muted" aria-live="polite"></span>
+            </div>
+            <div class="totals">
+              <div class="stat">
+                <span class="label">Cash</span
+                ><span class="value" id="cash-value">$—</span>
+              </div>
+              <div class="stat">
+                <span class="label">Portfolio</span
+                ><span class="value" id="portfolio-value">$—</span>
+              </div>
+            </div>
+            <div
+              class="table-wrap"
+              role="region"
+              aria-label="Owned stocks table"
+            >
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Ticker</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Current Price</th>
+                    <th scope="col">Total Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <h3 class="section-title">Portfolio Value</h3>
+            <div class="chart" aria-label="Portfolio value over time">
+              Portfolio chart will render here
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+          <div class="footer-top">
+            <div class="footer-brand">
+              <h3>Stock Trading Simulator</h3>
+              <p>Track your holdings and practice disciplined investing.</p>
+            </div>
+            <div class="footer-links">
+              <h4>Explore</h4>
+              <ul>
+                <li><a href="./transactions.html">Transactions</a></li>
+                <li><a href="./buy.html">Buy</a></li>
+                <li><a href="./sell.html">Sell</a></li>
+              </ul>
+            </div>
+            <div class="footer-links">
+              <h4>Support</h4>
+              <ul>
+                <li><a href="mailto:support@example.com">Contact Us</a></li>
+                <li><a href="./login.html">Login</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <span>© 2025 Stock Trading Simulator</span>
+            <div class="social">
+              <a href="#" aria-label="Twitter">T</a>
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="GitHub">GH</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <script type="module">
+      /*
+       * Portfolio page script (documented for clarity)
+       *
+       * Responsibilities
+       * - Require authentication (redirects to login if no token)
+       * - Load cash balance from /account
+       * - Load positions from /portfolio/holdings (fallback to sample data if unavailable)
+       * - Load prices from /market/tickers (fallback to sample prices if unavailable)
+       * - Render positions table and aggregate portfolio value
+       * - Provide a Refresh button and "last updated" status
+       */
+      import {
+        requireAuth,
+        getBalance,
+        getHoldings,
+        listTickers,
+      } from "../javascript/api.js";
+
+      // Gate access: user must be signed in
+      requireAuth();
+
+      // Utilities and DOM references
+      const fmtMoney = (n) =>
+        Number(n || 0).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+
+      const cashEl = document.getElementById("cash-value");
+      const portfolioEl = document.getElementById("portfolio-value");
+      const tbody = document.querySelector(".data-table tbody");
+      const refreshBtn = document.getElementById("refresh-btn");
+      const lastUpdated = document.getElementById("last-updated");
+
+      if (refreshBtn)
+        refreshBtn.addEventListener("click", () => loadPortfolioData());
+
+      async function loadPortfolioData() {
+        // Show a neutral loading row while we fetch data
+        if (tbody) {
+          tbody.innerHTML =
+            '<tr><td colspan="4" style="text-align:center; padding:1rem; color:#64748b;">Loading…</td></tr>';
+        }
+
+        try {
+          // 1) Balance
+          const { cash_balance = 0 } = (await getBalance()) || {};
+          if (cashEl) cashEl.textContent = `$${fmtMoney(cash_balance)}`;
+
+          // 2) Holdings (fallback to sample if endpoint missing)
+          let holdings = [];
+          try {
+            holdings = (await getHoldings()) || [];
+          } catch (_) {
+            holdings = [
+              { ticker: "AAPL", quantity: 10 },
+              { ticker: "MSFT", quantity: 6 },
+            ];
+          }
+
+          // 3) Prices (fallback to sample if endpoint missing)
+          let tickers = [];
+          try {
+            tickers = (await listTickers()) || [];
+          } catch (_) {
+            tickers = [
+              {
+                ticker: "AAPL",
+                company_name: "Apple Inc.",
+                current_price: 191.12,
+              },
+              {
+                ticker: "MSFT",
+                company_name: "Microsoft Corp.",
+                current_price: 414.22,
+              },
+              {
+                ticker: "AMZN",
+                company_name: "Amazon.com, Inc.",
+                current_price: 176.45,
+              },
+            ];
+          }
+
+          // Fast lookup for price by ticker
+          const priceMap = new Map();
+          tickers.forEach((t) =>
+            priceMap.set(
+              String(t.ticker).toUpperCase(),
+              Number(t.current_price)
+            )
+          );
+
+          // 4) Render positions and compute total
+          let portfolioTotal = 0;
+          if (tbody) {
+            tbody.innerHTML = "";
+            if (holdings.length) {
+              holdings.forEach((h) => {
+                const ticker = String(h.ticker || h.symbol || "").toUpperCase();
+                const quantity = Number(h.quantity || h.shares || 0);
+                const px = priceMap.get(ticker) || Number(h.current_price || 0);
+                const total = quantity * px;
+                portfolioTotal += total;
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                  <td>${ticker}</td>
+                  <td>${quantity.toLocaleString()}</td>
+                  <td>$${fmtMoney(px)}</td>
+                  <td>$${fmtMoney(total)}</td>
+                `;
+                tbody.appendChild(tr);
+              });
+            } else {
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                <td colspan="4" style="text-align:center; padding:1.25rem; color:#64748b;">
+                  No holdings yet. Start by <a href="./buy.html" class="text-link">buying some stocks</a>.
+                </td>
+              `;
+              tbody.appendChild(tr);
+            }
+          }
+
+          if (portfolioEl)
+            portfolioEl.textContent = `$${fmtMoney(portfolioTotal)}`;
+          if (lastUpdated)
+            lastUpdated.textContent = `Last updated ${new Date().toLocaleString()}`;
+        } catch (error) {
+          // Render a friendly error row
+          if (tbody) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="4" style="text-align:center; padding:1.25rem; color:#ef4444;">Error loading portfolio data. Please refresh.</td>
+              </tr>
+            `;
+          }
+        }
+      }
+
+      // Initial load
+      loadPortfolioData();
+    </script>
+  </body>
+</html>

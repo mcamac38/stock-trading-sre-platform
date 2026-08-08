@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login | Stock Trading Simulator</title>
+    <meta
+      name="description"
+      content="Sign in to your Stock Trading Simulator account."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#0a2540" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+    <link rel="canonical" href="/pages/login.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Login • Stock Trading Simulator" />
+    <meta
+      property="og:description"
+      content="Access your simulator account and continue practicing trades."
+    />
+    <meta property="og:image" content="../images/social-card.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Login • Stock Trading Simulator" />
+    <meta
+      name="twitter:description"
+      content="Access your simulator account and continue practicing trades."
+    />
+    <meta name="twitter:image" content="../images/social-card.png" />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header" role="banner">
+        <div class="branding">
+          <h1>Stock Trading Simulator</h1>
+        </div>
+      </header>
+
+      <main class="site-main auth-wrapper">
+        <div class="container" style="max-width: 760px">
+          <section class="card auth-card" aria-labelledby="login-title">
+            <div class="auth-header">
+              <h2 class="auth-title" id="login-title">Welcome back</h2>
+              <p class="auth-subtitle">Sign in to your account to continue</p>
+            </div>
+            <div class="msg error" role="alert" aria-live="polite">
+              Invalid username or password.
+            </div>
+
+            <form class="form" action="#" method="post" novalidate>
+              <div class="form-row">
+                <label for="username">Username</label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  autocomplete="username"
+                  required
+                />
+              </div>
+              <div class="form-row">
+                <label for="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  autocomplete="current-password"
+                  required
+                />
+              </div>
+              <div class="actions">
+                <button
+                  type="submit"
+                  class="btn btn-accent"
+                  aria-label="Sign in"
+                >
+                  Login
+                </button>
+                <a class="btn btn-cancel" href="../index.html">Cancel</a>
+              </div>
+            </form>
+
+            <div class="divider" role="separator" aria-hidden="true"></div>
+            <div class="auth-footer-links">
+              <span class="muted">Don't have an account?</span>
+              <a class="text-link" href="./register.html">Create one</a>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <footer class="site-footer" role="contentinfo">
+        <small>© 2025 Stock Trading Simulator | Arizona State University</small>
+      </footer>
+    </div>
+	<script>
+      window.API_BASE_URL = "https://6hhdszthdg.execute-api.us-east-1.amazonaws.com/prod";
+    </script>
+	<script type="module">
+	import { loginUser } from "../javascript/api.js";
+	
+	const form = document.querySelector("form");
+	
+	const msgError = document.querySelector(".msg.error");
+	if (msgError) msgError.style.display = "none";
+	
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		
+		const username = (document.getElementById("username")?.value || "").trim();
+		const password = (document.getElementById("password")?.value || "").trim();
+		
+		//Basic Guard
+		if (!username || !password) {
+		  if (msgError) {
+			msgError.textContent = "Enter username and password.";
+			msgError.style.display = "block";
+		  }
+		  return;
+		}
+		
+		//Display button during request
+		const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+		if (submitButton) submitButton.disabled = true;
+		
+		//clears old messages
+		//if (msgSuccess) msgSuccess.style.display = "none"
+		if (msgError) {msgError.textContent = ""; msgError.style.display = "none"; }
+		
+		try {
+			await loginUser({ username, password }) //set token in local storage
+			//go to first authenticated page (adjust path if different)
+			let destination = "./portfolio.html"
+			//Shows success plus redirects (you can adjust the destination if you need)
+			//if (msgSuccess) {
+			//	msgSuccess.textContent = "Login successful, Redirecting...";
+			//	msgSuccess.style.display = "block";
+			//}
+			
+			//Supports ?next=/pages/buy.html
+			//const params = new URLSearchParams(window.location.search);
+			//const next = params.get("next") || "./portfolio.html";
+			//setTimeout(() => { window.location.href = next; }, 600);
+			try {
+			  const token = localStorage.getItem("token") || "";
+			  if (token) {
+			    const res = await fetch(`${window.API_BASE_URL}/account`, {
+				  headers: {
+				    Authorization: `Bearer ${token}`,
+				  }
+				});
+				
+				if (res.ok) {
+				  const data = await res.json();
+				  const role = (data.role || "").toLowerCase();
+				  if (role == "admin") {
+				    destination = "./Admin-Dashboard.html";
+				  }
+				}
+			  }
+		    }
+			catch (innerErr) {
+			  console.error("Failed to fetch account for role check:", innerErr);
+			}
+			
+			window.location.href = destination;
+		}
+		catch (err) {
+			if (msgError) {
+				msgError.textContent = err?.message || "Invalid username or password.";
+				msgError.style.display = "block";
+			}
+			else {
+				alert(err?.message || "Invalid username or password.");
+			}
+		}
+		finally {
+			if (submitButton) submitButton.disabled = false;
+		}
+	});
+	</script>
+  </body>
+</html>
