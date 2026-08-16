@@ -1,3 +1,4 @@
+jwt
 flask
 flask_cors
 pytest
